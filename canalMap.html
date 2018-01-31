@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>渠道地图</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" type="text/css" href="css/canalMap.css" />
+</head>
+<body>
+    <!-- 标题栏 -->
+    <header>
+        <img src="img/back.png" alt=""/>
+        <div>渠道地图</div>
+    </header>
+    <div id="allmap" style="width:100%;height:623px;"></div>
+    <div id="info">
+        <ul>
+            <li><img src="img/sign-s.png" alt=""></li>
+            <li>签约：</li>
+            <li id="sign">-</li>
+        </ul>
+        <ul>
+            <li><img src="img/noSign.png" alt=""></li>
+            <li>待签：</li>
+            <li id="noSign">-</li>
+        </ul>
+    </div>
+   <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=CB2ede775afeb6e413abd40261396a69"></script>
+   <script type="text/javascript" src="js/canalMap.js" ></script>
+</body>
+</html>

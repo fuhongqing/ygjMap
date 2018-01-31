@@ -1,0 +1,81 @@
+/*样式重置*/
+body{
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+a{
+    text-decoration: none;
+}
+ul,ol,dl,dd,h1,h2,h3,h4,h5,h6,p{
+    margin:0;
+    padding:0;
+    list-style: none;
+}
+*{
+    box-sizing: border-box;
+}
+img{
+    vertical-align: middle;
+}
+header{
+    height: 44px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+    text-align: center;
+}
+header>img{
+    width: 9px;
+    height: 14px;
+    margin-left: 16px;
+}
+header>div{
+    flex: 1;
+}
+/*左下角展示框*/
+#info{
+    width: 180px;
+    height: 105px;
+    background: #ffffff;
+    color:#333;
+    padding: 19px 0 19px 23px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    font-size: 16px;
+}
+#info ul{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+#info ul>li:first-child{
+    margin-right: 20px;
+}
+#info ul>li:last-child{
+    flex: 1;
+}
+/*信息框*/
+.BMap_bubble_content{
+    font-size: 16px;
+    color:#333333;
+}
+button{
+    background: #ffffff;
+    padding: 0;
+    border: none;
+    outline: none;
+    color:#999999;
+    font-size: 14px;
+}
+button img{
+    margin-left: 10px;
+}
+.BMap_center{
+    height: 63px!important;
+}
+.BMap_bottom{
+    width: 233px!important;
+}
