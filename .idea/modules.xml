@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ygjMap.iml" filepath="$PROJECT_DIR$/.idea/ygjMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ygj-map.iml" filepath="$PROJECT_DIR$/.idea/ygj-map.iml" />
     </modules>
   </component>
 </project>

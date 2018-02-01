@@ -3,6 +3,9 @@ window.onload=function(){
     var imgSrc='./img/';
     // 参数声明
     var longitudeMin=100.2,longitudeMax=100.23,latitudeMin=100.2,latitudeMax=100.325,propertyIDs='84,64';
+    var latitudeArr =[],
+        longitudeArr=[],
+        addressArr=[],agencyNameArr=[],telephoneArr=[],isPartnerArr=[];
     var img=document.querySelector('header>img');
     img.onclick=function(){
         history.back();
@@ -10,14 +13,14 @@ window.onload=function(){
     //依据设计图视口尺寸动态设置根标签字体大小
     //document.documentElement.style.fontSize = document.documentElement.clientWidth / 3.75 + 'px';
     // 百度地图API功能
-    map = new BMap.Map("allmap", {
+    var map = new BMap.Map("allmap", {
         minZoom: 14,
         maxZoom: 20,
         enableMapClick: false
     });
     //map.disableDoubleClickZoom();
     map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-    map.enableDragging();   //开启拖拽
+    //map.enableDragging();   //开启拖拽
     //缩放控件
     //map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_ZOOM}));
     map.centerAndZoom(new BMap.Point(121.434702,31.266207), 14);
@@ -38,8 +41,15 @@ window.onload=function(){
     map.addControl(geolocationControl);
     //setCenter()、panTo()、zoomTo()
     var geolocation = new BMap.Geolocation();
+    //信息窗口
+    var opts = {
+        width : 250,     // 信息窗口宽度
+        minHeight: 80,     // 信息窗口高度
+        title : "" , // 信息窗口标题
+        enableMessage:true//设置允许信息窗发送短息
+    };
     // 开启SDK辅助定位
-    geolocation.enableSDKLocation();
+    //geolocation.enableSDKLocation();
     geolocation.getCurrentPosition(function(r){
             //console.log(r.point);
             if(this.getStatus() == BMAP_STATUS_SUCCESS){
@@ -51,19 +61,23 @@ window.onload=function(){
                 map.addOverlay(circle);
                 //alert('您的位置：'+r.point.lng+','+r.point.lat);
                 longitudeMin=r.point.lng-0.009;
-                longitudeMin=r.point.lng+0.009;
+                longitudeMax=r.point.lng+0.009;
                 latitudeMin=r.point.lat-0.01;
                 latitudeMax=r.point.lat+0.01;
                 getData();
+                // var point = new BMap.Point(r.point.lng,r.point.lat);//用所定位的经纬度查找所在地省市街道等信息
+                // var gc = new BMap.Geocoder();
+                // gc.getLocation(point, function(rs){
+                //     var addComp = rs.addressComponents; console.log(rs.address);//地址信息
+                //     alert(rs.address);//弹出所在地址
+                //
+                // });
             }else {
                 console.log('failed'+this.getStatus());
             }
         },{enableHighAccuracy: true});
     //获取渠道经纬度信息，添加标注，注册点击事件
-    var latitudeArr =[121.434702,121.444702,121.454702,121.464702,121.474702,121.484702,121.494702],
-        longitudeArr=[31.236207,31.246207,31.256207,31.266207,31.276207,31.286207,31.296207],
-        addressArr=[],agencyNameArr=[],telephoneArr=[],isPartnerArr=[];
-    //[121.434702,31.266207,"上海市东城区王府井大街88号乐天银泰百货八层",'通协路268号尚品都汇','15692928888'],
+     //[121.434702,31.266207,"上海市东城区王府井大街88号乐天银泰百货八层",'通协路268号尚品都汇','15692928888'],
     function getData(){
         //2.2:创建XHR对象
         var xhr = new XMLHttpRequest();
@@ -77,24 +91,19 @@ window.onload=function(){
         xhr.onreadystatechange = function(){
             if(xhr.readyState===4&&xhr.status===200){
                 //console.log(JSON.parse(xhr.responseText).data);
-                document.getElementById('sign').innerHTML=JSON.parse(xhr.responseText).data.isPartner||0;
-                document.getElementById('noSign').innerHTML=JSON.parse(xhr.responseText).data.isNotPartner||0;
+                document.getElementById('sign').innerHTML=JSON.parse(xhr.responseText).data.isPartner;
+                document.getElementById('noSign').innerHTML=JSON.parse(xhr.responseText).data.isNotPartner;
                 var mapDatas=JSON.parse(xhr.responseText).data.data;
                 if(mapDatas){
                     mapDatas.forEach(function(val){
                         agencyNameArr.push(val.agencyName);
                         addressArr.push(val.address);
                         telephoneArr.push(val.telephone);
-                        //latitudeArr.push(val.latitude);
-                        //longitudeArr.push(val.longitude);
+                        latitudeArr.push(val.latitude);
+                        longitudeArr.push(val.longitude);
                         isPartnerArr.push(val.isPartner);
+                        //console.log(agencyNameArr);
                     });
-                    var opts = {
-                        width : 250,     // 信息窗口宽度
-                        height: 80,     // 信息窗口高度
-                        title : "" , // 信息窗口标题
-                        enableMessage:true//设置允许信息窗发送短息
-                    };
                     //自定义marker
                     // function addMarker(point) {  // 创建图标对象
                     //     var myIcon = new BMap.Icon("img/sign-big.png", new BMap.Size(28, 39));
@@ -102,11 +111,10 @@ window.onload=function(){
                     //     var marker = new BMap.Marker(point, {icon: myIcon});
                     //     map.addOverlay(marker);
                     // }
-                    if(agencyNameArr.length>0){
-                        for(var i=0;i<agencyNameArr.length;i++){
-                            //var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]));  // 创建标注
-                            var point = new BMap.Point(latitudeArr[i],longitudeArr[i]);
-                            var content =`
+                    for(var i=0,len=agencyNameArr.length;i<len;i++){
+                        //var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]));  // 创建标注
+                        var point = new BMap.Point(longitudeArr[i],latitudeArr[i]);
+                        var content =`
                                    <ul class="info_window">
                                      <li>${agencyNameArr[i]}</li>
                                      <li style='color:#999999;font-size: 14px;margin: 10px 0;'>${addressArr[i]}</li>
@@ -115,31 +123,18 @@ window.onload=function(){
                                      </li>
                                    </ul>
                                 `;//agencyNameArr[i]+'<br/>'+"<p style='color:#999999;font-size: 14px;'>"+addressArr[i]+"</p>"+"<button style='color:#999999;font-size: 14px;' class="+telephoneArr[i]+">"+telephoneArr[i]+'&nbsp;&nbsp;'+"<img src='img/phone.png'></button>";
-                            //addMarker(point);
-                            var myIcon;// = new BMap.Icon("img/sign-big.png", new BMap.Size(28, 39));
-                            if(isPartnerArr[i]>0){
-                                myIcon=new BMap.Icon(imgSrc+"sign-big.png", new BMap.Size(28, 39));
-                            }else{
-                                myIcon=new BMap.Icon(imgSrc+"noSign-big.png", new BMap.Size(28, 39));
-                            }
-                            // 创建标注对象并添加到地图
-                            var marker = new BMap.Marker(point, {icon: myIcon});
-                            map.addOverlay(marker);
-                            addClickHandler(content,marker);
-                            //marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+                        //addMarker(point);
+                        var myIcon;// = new BMap.Icon("img/sign-big.png", new BMap.Size(28, 39));
+                        if(isPartnerArr[i]>0){
+                            myIcon=new BMap.Icon(imgSrc+"sign-big.png", new BMap.Size(28, 39));
+                        }else{
+                            myIcon=new BMap.Icon(imgSrc+"noSign-big.png", new BMap.Size(28, 39));
                         }
-                    }else{
-                        return;
-                    }
-                    function addClickHandler(content,marker){
-                        marker.addEventListener("click",function(e){
-                            openInfo(content,e)});
-                    }
-                    function openInfo(content,e){
-                        var p = e.target;
-                        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-                        var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
-                        map.openInfoWindow(infoWindow,point); //开启信息窗口
+                        // 创建标注对象并添加到地图
+                        var marker = new BMap.Marker(point, {icon: myIcon});
+                        map.addOverlay(marker);
+                        addClickHandler(content,marker);
+                        //marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
                     }
                 }
             }else{
@@ -147,8 +142,14 @@ window.onload=function(){
             }
         };
     }
-    getData();
+    function addClickHandler(content,marker){
+        marker.addEventListener("click",function(e){
+            openInfo(content,e)});
+    }
+    function openInfo(content,e){
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow,point); //开启信息窗口
+    }
 };
-//点击电话及图表进行拨号
-// phone($(e.target).attr('class'));
-// AndroidWebView.call($(e.target).attr('class'));
